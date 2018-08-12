@@ -6,10 +6,10 @@
 #include "bmp.c"
 
 //Image Size
-#define WIDTH 640
-#define HEIGHT 480
+#define WIDTH 400
+#define HEIGHT 300
 //Enable percent done output on console
-//#define PERCENT_DONE_OUT
+#define PERCENT_DONE_OUT
 //Write sample images every 100 pixels
 //#define WRITE_PARTIAL_IMAGES
 
@@ -265,7 +265,7 @@ void render_image(char * filename, double rotate){
 	//iterate through each pixel
 	for(pixelX = 0; pixelX < width; pixelX++){
 #ifdef PERCENT_DONE_OUT
-		printf("%f%c\n", ((double)pixelX/(double)width)*100, '%');
+		printf("\e7%.1f\x25\e8", ((double)pixelX/(double)width)*100);
 #endif
 #ifdef WRITE_PARTIAL_IMAGES
 		if(pixelX % 100 == 99){
@@ -284,18 +284,6 @@ void render_image(char * filename, double rotate){
 }
 
 int main(int argc, char **argv){
-	char * filename;
-	//rotate amount
-	double rotate;
-	int num;
-	if(argc != 3){
-		printf("Usage: fractal [out file] [pic num]\n");
-		exit(1);
-	}
-	filename = argv[1];
-	num = atoi(argv[2]);
-	rotate = (double)num * (0.05235987755);
-	char name[50];
-	sprintf(name, "%05d%s", num, filename);
-	render_image(name, rotate);
+	setbuf(stdout, NULL);
+	render_image("out.bmp", 0.1);
 }
