@@ -1,8 +1,8 @@
+#include <omp.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
-#include <time.h>
 #include "bmp.h"
 
 const char output_folder[] = "./outputs/";
@@ -11,12 +11,6 @@ const char output_folder[] = "./outputs/";
 int WIDTH;
 int HEIGHT;
 int JULIA_ITERATIONS;
-
-//Enable percent done output on console
-#define PERCENT_DONE_OUT
-//Write sample images every 100 pixels
-//#define WRITE_PARTIAL_IMAGES
-
 
 #define RENDER_AREA 1.5
 
@@ -235,9 +229,7 @@ uint32_t get_color(unsigned int x, unsigned int y, unsigned int width, unsigned 
 	}
 	return 0x00ffffff;
 }
-void render_image(char * filename, double rotate) {
-	clock_t begin, end;
-    double time_spent;
+void render_image(char * filename, double rotate){
 
 	//X and Y pixel locations
 	unsigned int pixelX;
@@ -251,10 +243,11 @@ void render_image(char * filename, double rotate) {
 	//set width and height
 	width = WIDTH;
 	height = HEIGHT;
-
-	begin = clock();
+	double begin = omp_get_wtime();
+	omp_set_num_threads(8);
 	//iterate through each pixel
-	for(pixelX = 0; pixelX < width; pixelX++){
+	#pragma omp parallel for shared(image,width,height) private(color, pixelX, pixelY)
+	for(pixelX = 0; pixelX < width; pixelX++) {
 		for(pixelY = 0; pixelY < height; pixelY++){
 			color = get_color(pixelX, pixelY, width, height, rotate);
 			image[pixelY*WIDTH*3 + pixelX*3 + 2] = (unsigned char)((color >> 16)&0xff);
@@ -262,8 +255,8 @@ void render_image(char * filename, double rotate) {
 			image[pixelY*WIDTH*3 + pixelX*3 + 0] = (unsigned char)(color & 0xff);
 		}
 	}
-	end = clock();
-	printf("Generated %dx%d image in %.2lf seconds, writing to file..\n", WIDTH, HEIGHT, ((double)(end -  begin))/ (double) (CLOCKS_PER_SEC));
+	double end = omp_get_wtime();
+	printf("Generated %dx%d image in %.2lf seconds, writing to file..\n", WIDTH, HEIGHT, ((double)(end -  begin)));
 	//write image
 	generateBitmapImage((unsigned char *)image, height, width, filename);
 }
