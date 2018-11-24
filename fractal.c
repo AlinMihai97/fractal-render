@@ -4,6 +4,8 @@
 #include <math.h>
 #include "bmp.h"
 
+const char output_folder[] = "./outputs/";
+
 //Image Size
 int WIDTH;
 int HEIGHT;
@@ -270,16 +272,18 @@ void render_image(char * filename, double rotate){
 
 int main(int argc, char **argv){
 	setbuf(stdout, NULL);
-	if(argc < 4 || argc > 4) {
-		printf("Not enough params, correct usage: ./fractal WIDTH HEIGHT JULIA_ITERATIONS\n");
+	if(argc < 4 || argc > 5) {
+		printf("Not enough params, correct usage: ./fractal WIDTH HEIGHT JULIA_ITERATIONS [FILENAME=out.bmp]\n");
 		return 1;
 	}
 	WIDTH = atoi(argv[1]);
 	HEIGHT = atoi(argv[2]);
 	JULIA_ITERATIONS = atoi(argv[3]);
-
+	char* filename = (char*) calloc(sizeof(char) , strlen(output_folder) + strlen(argv[4]));
+	strcpy(filename, output_folder);
+	strcat(filename, argv[4]);
 	int i,j;
 	image = (unsigned char *) malloc(HEIGHT * WIDTH * 3 * sizeof(char));
-	render_image("out.bmp", 0.1);
+	render_image(filename, 0.1);
 	return 0;
 }

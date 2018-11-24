@@ -1,3 +1,4 @@
-out.bmp
+outputs
+*.bmp
 *.o
 fractal
