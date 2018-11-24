@@ -1,9 +1,8 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <math.h>
 #include <string.h>
-#include "bmp.c"
+#include <math.h>
+#include "bmp.h"
 
 //Image Size
 #define WIDTH 400

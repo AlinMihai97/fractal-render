@@ -1,13 +1,8 @@
-#include <stdio.h>
+#include "bmp.h"
 
 const int bytesPerPixel = 3; /// red, green, blue
 const int fileHeaderSize = 14;
 const int infoHeaderSize = 40;
-
-void generateBitmapImage(unsigned char *image, int height, int width, char* imageFileName);
-unsigned char* createBitmapFileHeader(int height, int width);
-unsigned char* createBitmapInfoHeader(int height, int width);
-
 
 void generateBitmapImage(unsigned char *image, int height, int width, char* imageFileName){
 
