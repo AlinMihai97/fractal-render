@@ -5,8 +5,8 @@
 #include "bmp.h"
 
 //Image Size
-#define WIDTH 400
-#define HEIGHT 300
+int WIDTH;
+int HEIGHT;
 //Enable percent done output on console
 #define PERCENT_DONE_OUT
 //Write sample images every 100 pixels
@@ -25,7 +25,7 @@
 //How many steps (STEP_DIST) to back up before shooting normal rays
 #define NORMAL_BACK_UP_STEPS 10
 
-unsigned char image[HEIGHT][WIDTH][3];
+unsigned char *image;
 
 //A julia set generator
 unsigned char julia_point(double zx, double zy, double cx, double cy, unsigned int iterations){
@@ -245,7 +245,6 @@ uint32_t get_color(unsigned int x, unsigned int y, unsigned int width, unsigned 
 	}
 	return 0x00ffffff;
 }
-
 void render_image(char * filename, double rotate){
 	//X and Y pixel locations
 	unsigned int pixelX;
@@ -273,9 +272,9 @@ void render_image(char * filename, double rotate){
 #endif
 		for(pixelY = 0; pixelY < height; pixelY++){
 			color = get_color(pixelX, pixelY, width, height, rotate);
-			image[pixelY][pixelX][2] = (unsigned char)((color >> 16)&0xff);
-			image[pixelY][pixelX][1] = (unsigned char)((color >> 8)&0xff);
-			image[pixelY][pixelX][0] = (unsigned char)(color & 0xff);
+			image[pixelY*WIDTH*3 + pixelX*3 + 2] = (unsigned char)((color >> 16)&0xff);
+			image[pixelY*WIDTH*3 + pixelX*3 + 1] = (unsigned char)((color >> 8)&0xff);
+			image[pixelY*WIDTH*3 + pixelX*3 + 0] = (unsigned char)(color & 0xff);
 		}
 	}												 
 	//write image
@@ -284,5 +283,15 @@ void render_image(char * filename, double rotate){
 
 int main(int argc, char **argv){
 	setbuf(stdout, NULL);
+	if(argc < 3 || argc > 3) {
+		printf("Not enough params, correct usage: ./fractal WIDTH HEIGHT\n");
+		return 1;
+	}
+	WIDTH = atoi(argv[1]);
+	HEIGHT = atoi(argv[2]);
+
+	int i,j;
+	image = (unsigned char *) malloc(HEIGHT * WIDTH * 3 * sizeof(char));
 	render_image("out.bmp", 0.1);
+	return 0;
 }

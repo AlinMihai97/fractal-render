@@ -10,4 +10,4 @@ bmp.o: bmp.c
 	gcc -c bmp.c -o bmp.o 
 
 clean:
-	rm *.o fractal
+	rm -f *.o fractal
