@@ -7,6 +7,8 @@
 //Image Size
 int WIDTH;
 int HEIGHT;
+int JULIA_ITERATIONS;
+
 //Enable percent done output on console
 #define PERCENT_DONE_OUT
 //Write sample images every 100 pixels
@@ -26,21 +28,6 @@ int HEIGHT;
 #define NORMAL_BACK_UP_STEPS 10
 
 unsigned char *image;
-
-//A julia set generator
-unsigned char julia_point(double zx, double zy, double cx, double cy, unsigned int iterations){
-	unsigned int n;
-  double tempX;
-  for(n = 0; n < iterations; n++){
-    tempX = zx;
-    zx = (zx*zx)-(zy*zy) + cx;
-    zy = (2.0*tempX*zy) + cy;
-    if(sqrt((zx*zx) + (zy*zy)) > 4.0){
-      return 0;
-    }
-  }
-	return 1;
-}
 
 //c value for quaternions
 // -1,0.2,0,0
@@ -224,7 +211,7 @@ uint32_t get_color(unsigned int x, unsigned int y, unsigned int width, unsigned 
 	//set parameters
 	stepDist = STEP_DIST;
 	maxSteps = MAX_STEPS;
-	iters = 200;
+	iters = JULIA_ITERATIONS;
 	
 	//normalize d, and divide by stepDist
 	double dist = sqrt(dx*dx + dy*dy + dz*dz);
@@ -283,12 +270,13 @@ void render_image(char * filename, double rotate){
 
 int main(int argc, char **argv){
 	setbuf(stdout, NULL);
-	if(argc < 3 || argc > 3) {
-		printf("Not enough params, correct usage: ./fractal WIDTH HEIGHT\n");
+	if(argc < 4 || argc > 4) {
+		printf("Not enough params, correct usage: ./fractal WIDTH HEIGHT JULIA_ITERATIONS\n");
 		return 1;
 	}
 	WIDTH = atoi(argv[1]);
 	HEIGHT = atoi(argv[2]);
+	JULIA_ITERATIONS = atoi(argv[3]);
 
 	int i,j;
 	image = (unsigned char *) malloc(HEIGHT * WIDTH * 3 * sizeof(char));
